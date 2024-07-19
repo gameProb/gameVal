@@ -1,0 +1,29 @@
+spring:
+    application:
+        name: gameVal
+
+    datasource:
+        url: jdbc:mysql://127.0.0.1:3306/myTempDB?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: root
+        password: 1234
+
+    jpa:
+        #show-sql: true
+        hibernate:
+            ddl-auto: create-drop
+        properties:
+            hibernate:
+                format_sql: true
+
+    data:
+        redis:
+            host: localhost
+            port: 6379
+
+    jackson:
+        serialization:
+            write-date-keys-as-timestamps: false
+
+springdoc:
+    show-login-endpoint: true
