@@ -32,10 +32,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'com.mysql:mysql-connector-j'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+	runtimeOnly 'com.h2database:h2'
 
 
 	// Security
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	//Jwt
@@ -50,6 +51,8 @@ dependencies {
 	// ETC
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
