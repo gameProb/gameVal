@@ -2,9 +2,8 @@ package com.project.gameVal.web.probability.dto;
 
 import com.project.gameVal.web.probability.domain.GameCompany;
 import com.project.gameVal.web.probability.domain.Role;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,10 +13,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameCompanyRegisterDTO {
-    @NotBlank @Min(4) @Max(20)
+    @NotBlank
+    @Size(min = 4, max = 20) // 문자열 길이 검증
     private String name;
 
-    @NotBlank @Min(4) @Max(30)
+    @NotBlank
+    @Size(min = 4, max = 70) // 문자열 길이 검증
     private String password;
 
     public GameCompany toEntity() {
