@@ -1,6 +1,7 @@
 package com.project.gameVal.common.JWT.auth;
 
 import com.project.gameVal.common.JWT.Exception.AccessTokenExpiredException;
+import com.project.gameVal.common.JWT.Exception.AccessTokenNotExistException;
 import com.project.gameVal.common.JWT.Exception.RefreshTokenExpiredException;
 import com.project.gameVal.common.JWT.Exception.TokenNotValidException;
 import io.jsonwebtoken.Claims;
@@ -9,6 +10,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -189,5 +191,23 @@ public class JWTUtil {
                 .getExpiration().getTime();
 
         return expiration - new Date().getTime();
+    }
+
+
+
+    public String getAccessTokenByRequest(HttpServletRequest request) {
+        String accessToken = request.getHeader(accessTokenGettingHeaderName);
+        if (accessToken == null) {
+            throw new AccessTokenNotExistException();
+        }
+
+        return accessToken.replace(tokenPrefix, "");
+    }
+
+    public String getAccessTokenByAuthorizationHeader(String header) {
+        if (header == null) {
+            throw new AccessTokenNotExistException();
+        }
+        return header.replace(tokenPrefix, "");
     }
 }
