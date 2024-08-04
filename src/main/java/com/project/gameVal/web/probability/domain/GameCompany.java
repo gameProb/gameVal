@@ -11,6 +11,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,9 +32,11 @@ public class GameCompany {
     private Long id;
 
     @Column(nullable = false)
+    @NotBlank @Min(4) @Max(20)
     private String name;
 
     @Column(nullable = false)
+    @NotBlank @Min(4) @Max(30)
     private String password;
 
     @Enumerated(EnumType.STRING)
