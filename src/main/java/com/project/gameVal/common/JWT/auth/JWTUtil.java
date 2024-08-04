@@ -3,6 +3,7 @@ package com.project.gameVal.common.JWT.auth;
 import com.project.gameVal.common.JWT.Exception.AccessTokenExpiredException;
 import com.project.gameVal.common.JWT.Exception.RefreshTokenExpiredException;
 import com.project.gameVal.common.JWT.Exception.TokenNotValidException;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -123,5 +124,70 @@ public class JWTUtil {
         } catch (SignatureException e) {
             throw new TokenNotValidException();
         }
+    }
+
+    public String getNameByAccessToken(String accessToken) throws AccessTokenExpiredException {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningAccessKey())
+                .build()
+                .parseClaimsJws(accessToken).getBody()
+                .get("gameCompanyName", String.class);
+    }
+
+
+    public String getNameByRefreshToken(String refreshToken) throws RefreshTokenExpiredException {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningRefreshKey())
+                .build()
+                .parseClaimsJws(refreshToken).getBody()
+                .get("gameCompanyName", String.class);
+    }
+
+    public Long getIdByAccessToken(String accessToken) throws AccessTokenExpiredException {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningAccessKey())
+                .build()
+                .parseClaimsJws(accessToken).getBody();
+
+        String idString = claims.get("gameCompanyId", String.class);
+        if (idString == null) {
+            return Long.parseLong(claims.getSubject());
+        }
+
+        return Long.parseLong(idString);
+    }
+
+    public Long getIdByRefreshToken(String refreshToken) throws RefreshTokenExpiredException {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningRefreshKey())
+                .build()
+                .parseClaimsJws(refreshToken).getBody();
+
+        String idString = claims.get("gameCompanyId", String.class);
+        if (idString == null) {
+            return Long.parseLong(claims.getSubject());
+        }
+
+        return Long.parseLong(idString);
+    }
+
+    public Long getRemainingTimeByAccessToken(String accessToken) {
+        long expiration = Jwts.parserBuilder()
+                .setSigningKey(getSigningAccessKey())
+                .build()
+                .parseClaimsJws(accessToken).getBody()
+                .getExpiration().getTime();
+
+        return (expiration - new Date().getTime()) / 1000;
+    }
+
+    public Long getRemainingTimeByRefreshToken(String refreshToken) {
+        long expiration = Jwts.parserBuilder()
+                .setSigningKey(getSigningRefreshKey())
+                .build()
+                .parseClaimsJws(refreshToken).getBody()
+                .getExpiration().getTime();
+
+        return expiration - new Date().getTime();
     }
 }
