@@ -87,7 +87,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // Refresh Token을 쿠키에 저장 (클라이언트에서 이를 접근할 수 있는지 확인)
         Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
         refreshCookie.setHttpOnly(true);  // JavaScript에서 접근할 수 없도록 설정 -> XSS 공격 방지
-        refreshCookie.setPath("/");  // 모든 경로에서 접근 가능하도록 설정
+        refreshCookie.setPath("/token/reissue");  // 모든 경로에서 접근 가능하도록 설정
         response.addCookie(refreshCookie);
 
         // SameSite 속성 설정 (브라우저에 따라 다를 수 있음)
