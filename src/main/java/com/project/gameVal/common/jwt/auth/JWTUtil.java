@@ -9,10 +9,8 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.SignatureException;
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,20 +46,12 @@ public class JWTUtil {
     @Value("${jwt.refreshToken.expirationMs}")
     private long refreshTokenValidTime;
 
-    @PostConstruct
-    protected void init() {
-        accessTokenSecretKey = Base64.getEncoder().encodeToString(accessTokenSecretKey.getBytes());
-        refreshTokenSecretKey = Base64.getEncoder().encodeToString(refreshTokenSecretKey.getBytes());
-    }
-
     private Key getSigningAccessKey() {
-        byte[] keyBytes = Base64.getDecoder().decode(accessTokenSecretKey);
-        return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS256.getJcaName());
+        return new SecretKeySpec(accessTokenSecretKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
     }
 
     private Key getSigningRefreshKey() {
-        byte[] keyBytes = Base64.getDecoder().decode(refreshTokenSecretKey);
-        return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS256.getJcaName());
+        return new SecretKeySpec(refreshTokenSecretKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
     }
 
     public String createAccessToken(Long id, String name) {
