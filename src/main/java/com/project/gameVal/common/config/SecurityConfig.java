@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .sessionManagement(
                         (sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .logout(AbstractHttpConfigurer::disable)
-                .addFilterBefore(
+                .addFilterAt(
                         JWTAuthenticationFilter.builder()
                                 .authenticationManager(authenticationManager)
                                 .objectMapper(objectMapper)
