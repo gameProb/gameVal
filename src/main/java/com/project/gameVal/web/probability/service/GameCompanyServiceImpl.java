@@ -1,9 +1,9 @@
 package com.project.gameVal.web.probability.service;
 
-import com.project.gameVal.common.JWT.DTO.LogoutAccessTokenRequestDTO;
-import com.project.gameVal.common.JWT.Service.LogoutAccessTokenService;
-import com.project.gameVal.common.JWT.Service.RefreshTokenService;
-import com.project.gameVal.common.JWT.auth.JWTUtil;
+import com.project.gameVal.common.jwt.dto.LogoutAccessTokenRequestDTO;
+import com.project.gameVal.common.jwt.service.LogoutAccessTokenService;
+import com.project.gameVal.common.jwt.service.RefreshTokenService;
+import com.project.gameVal.common.jwt.auth.JWTUtil;
 import com.project.gameVal.web.probability.domain.GameCompany;
 import com.project.gameVal.web.probability.domain.PrincipalDetails;
 import com.project.gameVal.web.probability.dto.GameCompanyRegisterDTO;

@@ -1,6 +1,6 @@
 package com.project.gameVal.web.probability.controller.api;
 
-import com.project.gameVal.common.JWT.auth.JWTUtil;
+import com.project.gameVal.common.jwt.auth.JWTUtil;
 import com.project.gameVal.web.probability.domain.GameCompany;
 import com.project.gameVal.web.probability.dto.GameRegisterDTO;
 import com.project.gameVal.web.probability.service.GameCompanyService;
