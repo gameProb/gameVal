@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class AccessTokenNotExistException extends RuntimeExceptionWithHttpStatus {
     public AccessTokenNotExistException() {
-        super("accessToken is not exist", HttpStatus.NOT_FOUND);
+        super("accessToken is not exist", HttpStatus.UNAUTHORIZED);
     }
 }
