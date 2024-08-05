@@ -11,5 +11,6 @@ public interface LogoutRedisRepository extends CrudRepository<LogoutAccessToken,
     @NonNull
     <S extends LogoutAccessToken> S save(@NonNull S entity);
 
+    @Override
     boolean existsById(@NonNull String accessToken);
 }

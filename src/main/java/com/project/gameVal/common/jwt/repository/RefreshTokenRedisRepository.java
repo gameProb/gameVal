@@ -19,8 +19,10 @@ public interface RefreshTokenRedisRepository extends CrudRepository<RefreshToken
     void deleteById(@NonNull Long gameCompanyId);
 
     //READ
+    @Override
     @NonNull
     Optional<RefreshToken> findById(@NonNull Long gameCompanyId);
 
+    @Override
     boolean existsById(@NonNull Long gameCompanyId);
 }
