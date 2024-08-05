@@ -50,6 +50,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
                 new AntPathRequestMatcher("/health-check", HttpMethod.GET.name()),
                 new AntPathRequestMatcher("/token/validate", HttpMethod.POST.name()),
+                new AntPathRequestMatcher("/token/reissue", HttpMethod.POST.name()),
 
                 new AntPathRequestMatcher("/swagger-ui/**", HttpMethod.GET.name()),
                 new AntPathRequestMatcher("/v3/api-docs/**", HttpMethod.GET.name()),
