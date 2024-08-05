@@ -1,11 +1,11 @@
 package com.project.gameVal.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.gameVal.common.JWT.Service.LogoutAccessTokenService;
-import com.project.gameVal.common.JWT.Service.RefreshTokenService;
-import com.project.gameVal.common.JWT.auth.JWTAuthenticationFilter;
-import com.project.gameVal.common.JWT.auth.JWTAuthorizationFilter;
-import com.project.gameVal.common.JWT.auth.JWTUtil;
+import com.project.gameVal.common.jwt.service.LogoutAccessTokenService;
+import com.project.gameVal.common.jwt.service.RefreshTokenService;
+import com.project.gameVal.common.jwt.auth.JWTAuthenticationFilter;
+import com.project.gameVal.common.jwt.auth.JWTAuthorizationFilter;
+import com.project.gameVal.common.jwt.auth.JWTUtil;
 import com.project.gameVal.web.probability.service.GameCompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .sessionManagement(
                         (sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .logout(AbstractHttpConfigurer::disable)
-                .addFilterBefore(
+                .addFilterAt(
                         JWTAuthenticationFilter.builder()
                                 .authenticationManager(authenticationManager)
                                 .objectMapper(objectMapper)
