@@ -1,4 +1,4 @@
-package com.project.gameVal.common.Entity;
+package com.project.gameVal.common.entity;
 
 
 import jakarta.persistence.EntityListeners;
