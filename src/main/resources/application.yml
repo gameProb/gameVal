@@ -27,3 +27,4 @@ spring:
 
 springdoc:
     show-login-endpoint: true
+

@@ -4,20 +4,23 @@ import com.project.gameVal.common.jwt.exception.AccessTokenExpiredException;
 import com.project.gameVal.common.jwt.exception.AccessTokenNotExistException;
 import com.project.gameVal.common.jwt.exception.RefreshTokenExpiredException;
 import com.project.gameVal.common.jwt.exception.TokenNotValidException;
+import com.project.gameVal.web.probability.domain.GameCompanyInformInToken;
+import com.project.gameVal.web.probability.domain.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import javax.crypto.spec.SecretKeySpec;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -54,11 +57,12 @@ public class JWTUtil {
         return new SecretKeySpec(refreshTokenSecretKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
     }
 
-    public String createAccessToken(Long id, String name) {
+    public String createAccessToken(Long id, String name, Role role) {
         Date now = new Date();
         Map<String, Object> claims = new HashMap<>();
         claims.put("gameCompanyId", id.toString());
         claims.put("gameCompanyName", name);
+        claims.put("role", role.toString());
 
         return Jwts.builder()
                 //header
@@ -72,11 +76,12 @@ public class JWTUtil {
                 .compact();
     }
 
-    public String createRefreshToken(Long id, String name) {
+    public String createRefreshToken(Long id, String name, Role role) {
         Date now = new Date();
         Map<String, Object> claims = new HashMap<>();
         claims.put("gameCompanyId", id.toString());
         claims.put("gameCompanyName", name);
+        claims.put("role", role.toString());
 
         return Jwts.builder()
                 //header
@@ -199,5 +204,32 @@ public class JWTUtil {
             throw new AccessTokenNotExistException();
         }
         return header.replace(tokenPrefix, "");
+    }
+
+
+    public GameCompanyInformInToken getGameCompanyInformInAccessToken(String accessToken) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningAccessKey())
+                .build()
+                .parseClaimsJws(accessToken).getBody();
+
+        Long gameCompanyId = claims.get("gameCompanyId", Long.class);
+        String gameCompanyName = claims.get("gameCompanyName", String.class);
+        Role role = Role.valueOf(claims.get("role", String.class));
+
+        return new GameCompanyInformInToken(gameCompanyId, gameCompanyName, role);
+    }
+
+    public GameCompanyInformInToken getGameCompanyInformInRefreshToken(String refreshToken) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningRefreshKey())
+                .build()
+                .parseClaimsJws(refreshToken).getBody();
+
+        Long gameCompanyId = claims.get("gameCompanyId", Long.class);
+        String gameCompanyName = claims.get("gameCompanyName", String.class);
+        Role role = Role.valueOf(claims.get("role", String.class));
+
+        return new GameCompanyInformInToken(gameCompanyId, gameCompanyName, role);
     }
 }

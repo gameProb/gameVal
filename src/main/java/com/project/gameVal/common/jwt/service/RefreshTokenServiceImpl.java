@@ -6,6 +6,8 @@ import com.project.gameVal.common.jwt.exception.TokenNotValidException;
 import com.project.gameVal.common.jwt.repository.RefreshTokenRedisRepository;
 import com.project.gameVal.common.jwt.auth.JWTUtil;
 import com.project.gameVal.common.jwt.auth.JwtToken;
+import com.project.gameVal.web.probability.domain.GameCompanyInformInToken;
+import com.project.gameVal.web.probability.domain.Role;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,15 +42,17 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public JwtToken reIssueTokens(RefreshToken refreshToken)
             throws RefreshTokenNotExistException, TokenNotValidException {
         String refreshTokenValue = refreshToken.getRefreshTokenValue();
-        Long id = jwtUtil.getIdByRefreshToken(refreshTokenValue);
+        GameCompanyInformInToken gameCompanyInform = jwtUtil.getGameCompanyInformInRefreshToken(refreshTokenValue);
+        Long id = gameCompanyInform.getId();
+        String name = gameCompanyInform.getName();
+        Role role = gameCompanyInform.getRole();
 
         jwtUtil.validateRefreshToken(refreshTokenValue);
         if (!isValidId(id)) {
             throw new TokenNotValidException();
         }
 
-        String name = jwtUtil.getNameByRefreshToken(refreshTokenValue);
-        String newRefreshToken = jwtUtil.createRefreshToken(id, name);
+        String newRefreshToken = jwtUtil.createRefreshToken(id, name, role);
 
         saveOrUpdate(
                 RefreshToken.builder()
@@ -58,7 +62,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                         .build()
         );
 
-        return new JwtToken(jwtUtil.createAccessToken(id, name), newRefreshToken);
+        return new JwtToken(jwtUtil.createAccessToken(id, name, role), newRefreshToken);
     }
 
     @Override
