@@ -3,7 +3,6 @@ package com.project.gameVal.common.jwt.auth;
 import com.project.gameVal.common.jwt.exception.AccessTokenExpiredException;
 import com.project.gameVal.common.jwt.exception.AccessTokenNotExistException;
 import com.project.gameVal.common.jwt.exception.TokenNotValidException;
-import com.project.gameVal.common.jwt.service.LogoutAccessTokenService;
 import com.project.gameVal.web.probability.domain.GameCompanyInformInToken;
 import com.project.gameVal.web.probability.exception.GameCompanyNotFoundException;
 import jakarta.servlet.FilterChain;
@@ -30,12 +29,10 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     private final RequestMatcher excludeRequestMatcher;
 
-    private final LogoutAccessTokenService logoutAccessTokenService;
 
     @Builder
-    public JWTAuthorizationFilter(JWTUtil jwtUtil, LogoutAccessTokenService logoutAccessTokenService) {
+    public JWTAuthorizationFilter(JWTUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        this.logoutAccessTokenService = logoutAccessTokenService;
         this.excludeRequestMatcher = new OrRequestMatcher(
                 new AntPathRequestMatcher("/token/reIssue", HttpMethod.POST.name()),
 
@@ -67,9 +64,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             String accessToken = jwtUtil.getAccessTokenByRequest(request);
 
             jwtUtil.validateAccessToken(accessToken);
-            if (!logoutAccessTokenService.isValid(accessToken)) {
-                throw new TokenNotValidException();
-            }
 
             GameCompanyInformInToken gameCompanyInform = jwtUtil.getGameCompanyInformInAccessToken(accessToken);
 

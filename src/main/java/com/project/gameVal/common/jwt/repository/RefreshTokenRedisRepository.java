@@ -1,28 +1,29 @@
 package com.project.gameVal.common.jwt.repository;
 
-import com.project.gameVal.common.jwt.entity.RefreshToken;
-import java.util.Optional;
+import com.project.gameVal.common.jwt.entity.BlackListRefreshToken;
 import lombok.NonNull;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface RefreshTokenRedisRepository extends CrudRepository<RefreshToken, Long> {
+public interface RefreshTokenRedisRepository extends CrudRepository<BlackListRefreshToken, String> {
 
     //CREATE
     @Override
     @NonNull
-    <S extends RefreshToken> S save(@NonNull S entity);
+    <S extends BlackListRefreshToken> S save(@NonNull S entity);
 
     //DELETE
     @Override
-    void deleteById(@NonNull Long gameCompanyId);
+    void deleteById(@NonNull String refreshToken);
 
     //READ
     @Override
     @NonNull
-    Optional<RefreshToken> findById(@NonNull Long gameCompanyId);
+    Optional<BlackListRefreshToken> findById(@NonNull String refreshToken);
 
     @Override
-    boolean existsById(@NonNull Long gameCompanyId);
+    boolean existsById(@NonNull String refreshToken);
 }

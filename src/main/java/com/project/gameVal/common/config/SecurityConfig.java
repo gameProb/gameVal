@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.gameVal.common.jwt.auth.JWTAuthenticationFilter;
 import com.project.gameVal.common.jwt.auth.JWTAuthorizationFilter;
 import com.project.gameVal.common.jwt.auth.JWTUtil;
-import com.project.gameVal.common.jwt.service.LogoutAccessTokenService;
-import com.project.gameVal.common.jwt.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,8 +29,6 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final CorsConfigurationSource corsConfigurationSource;
     private final JWTUtil jwtUtil;
-    private final RefreshTokenService refreshTokenService;
-    private final LogoutAccessTokenService logoutAccessTokenService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -63,12 +59,11 @@ public class SecurityConfig {
                                 .authenticationManager(authenticationManager)
                                 .objectMapper(objectMapper)
                                 .jwtUtil(jwtUtil)
-                                .refreshTokenService(refreshTokenService)
                                 .build(),
                         UsernamePasswordAuthenticationFilter.class
                 )
                 .addFilterAfter(
-                        new JWTAuthorizationFilter(jwtUtil, logoutAccessTokenService),
+                        new JWTAuthorizationFilter(jwtUtil),
                         UsernamePasswordAuthenticationFilter.class
                 );
 

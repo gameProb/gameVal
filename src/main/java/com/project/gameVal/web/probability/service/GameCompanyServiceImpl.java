@@ -1,9 +1,6 @@
 package com.project.gameVal.web.probability.service;
 
-import com.project.gameVal.common.jwt.dto.LogoutAccessTokenRequestDTO;
-import com.project.gameVal.common.jwt.service.LogoutAccessTokenService;
-import com.project.gameVal.common.jwt.service.RefreshTokenService;
-import com.project.gameVal.common.jwt.auth.JWTUtil;
+import com.project.gameVal.common.jwt.service.TokenService;
 import com.project.gameVal.web.probability.domain.GameCompany;
 import com.project.gameVal.web.probability.domain.PrincipalDetails;
 import com.project.gameVal.web.probability.dto.GameCompanyRegisterDTO;
@@ -23,9 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class GameCompanyServiceImpl implements GameCompanyService {
     private final GameCompanyRepository gameCompanyRepository;
-    private final JWTUtil jwtUtil;
-    private final RefreshTokenService refreshTokenService;
-    private final LogoutAccessTokenService logoutAccessTokenService;
+    private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -61,8 +56,7 @@ public class GameCompanyServiceImpl implements GameCompanyService {
 
     @Override
     @Transactional
-    public void logout(String accessToken) {
-        logoutAccessTokenService.saveLogoutAccessToken(new LogoutAccessTokenRequestDTO(accessToken).toEntity(jwtUtil));
-        refreshTokenService.deleteById(jwtUtil.getIdByAccessToken(accessToken));
+    public void logout(String refreshToken) {
+        tokenService.blackListToken(refreshToken);
     }
 }

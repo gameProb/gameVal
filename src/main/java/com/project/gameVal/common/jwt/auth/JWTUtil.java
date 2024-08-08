@@ -60,7 +60,7 @@ public class JWTUtil {
     public String createAccessToken(Long id, String name, Role role) {
         Date now = new Date();
         Map<String, Object> claims = new HashMap<>();
-        claims.put("gameCompanyId", id.toString());
+        claims.put("gameCompanyId", id);
         claims.put("gameCompanyName", name);
         claims.put("role", role.toString());
 
@@ -79,7 +79,7 @@ public class JWTUtil {
     public String createRefreshToken(Long id, String name, Role role) {
         Date now = new Date();
         Map<String, Object> claims = new HashMap<>();
-        claims.put("gameCompanyId", id.toString());
+        claims.put("gameCompanyId", id);
         claims.put("gameCompanyName", name);
         claims.put("role", role.toString());
 
