@@ -28,14 +28,8 @@ public class JWTUtil {
     @Value("${jwt.accessToken.tokenPrefix}")
     private String tokenPrefix;
 
-    @Value("${jwt.accessToken.SendingHeaderName}")
-    private String accessTokenSendingHeaderName;
-
-    @Value("${jwt.accessToken.GettingHeaderName}")
-    private String accessTokenGettingHeaderName;
-
-    @Value("${jwt.refreshToken.headerName}")
-    private String refreshTokenHeaderName;
+    @Value("${jwt.accessToken.headerName}")
+    private String accessTokenHeaderName;
 
     @Value("${jwt.accessToken.secret}")
     private String accessTokenSecretKey;
@@ -123,61 +117,6 @@ public class JWTUtil {
         }
     }
 
-    public String getNameByAccessToken(String accessToken) throws AccessTokenExpiredException {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningAccessKey())
-                .build()
-                .parseClaimsJws(accessToken).getBody()
-                .get("gameCompanyName", String.class);
-    }
-
-
-    public String getNameByRefreshToken(String refreshToken) throws RefreshTokenExpiredException {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningRefreshKey())
-                .build()
-                .parseClaimsJws(refreshToken).getBody()
-                .get("gameCompanyName", String.class);
-    }
-
-    public Long getIdByAccessToken(String accessToken) throws AccessTokenExpiredException {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSigningAccessKey())
-                .build()
-                .parseClaimsJws(accessToken).getBody();
-
-        String idString = claims.get("gameCompanyId", String.class);
-        if (idString == null) {
-            return Long.parseLong(claims.getSubject());
-        }
-
-        return Long.parseLong(idString);
-    }
-
-    public Long getIdByRefreshToken(String refreshToken) throws RefreshTokenExpiredException {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSigningRefreshKey())
-                .build()
-                .parseClaimsJws(refreshToken).getBody();
-
-        String idString = claims.get("gameCompanyId", String.class);
-        if (idString == null) {
-            return Long.parseLong(claims.getSubject());
-        }
-
-        return Long.parseLong(idString);
-    }
-
-    public Long getRemainingTimeByAccessToken(String accessToken) {
-        long expiration = Jwts.parserBuilder()
-                .setSigningKey(getSigningAccessKey())
-                .build()
-                .parseClaimsJws(accessToken).getBody()
-                .getExpiration().getTime();
-
-        return (expiration - new Date().getTime()) / 1000;
-    }
-
     public Long getRemainingTimeByRefreshToken(String refreshToken) {
         long expiration = Jwts.parserBuilder()
                 .setSigningKey(getSigningRefreshKey())
@@ -191,21 +130,13 @@ public class JWTUtil {
 
 
     public String getAccessTokenByRequest(HttpServletRequest request) {
-        String accessToken = request.getHeader(accessTokenGettingHeaderName);
+        String accessToken = request.getHeader(accessTokenHeaderName);
         if (accessToken == null) {
             throw new AccessTokenNotExistException();
         }
 
         return accessToken.replace(tokenPrefix, "");
     }
-
-    public String getAccessTokenByAuthorizationHeader(String header) {
-        if (header == null) {
-            throw new AccessTokenNotExistException();
-        }
-        return header.replace(tokenPrefix, "");
-    }
-
 
     public GameCompanyInformInToken getGameCompanyInformInAccessToken(String accessToken) {
         Claims claims = Jwts.parserBuilder()
