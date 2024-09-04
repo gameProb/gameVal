@@ -23,5 +23,8 @@ public class ProbabilityTable {
     private String name;
 
     @DynamoDBAttribute
+    private Long gameCompanyId;
+
+    @DynamoDBAttribute
     private List<ProbabilityPair> probabilities;
 }

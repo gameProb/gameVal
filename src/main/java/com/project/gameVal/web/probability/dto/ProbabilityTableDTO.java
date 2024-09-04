@@ -18,7 +18,7 @@ public class ProbabilityTableDTO {
     @NotBlank
     private List<ProbabilityPair> probabilities;
 
-    public ProbabilityTable toEntity() {
-        return new ProbabilityTable(null, name, probabilities);
+    public ProbabilityTable toEntity(Long gameCompanyId) {
+        return new ProbabilityTable(null, name, gameCompanyId, probabilities);
     }
 }

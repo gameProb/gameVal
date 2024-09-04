@@ -32,10 +32,10 @@ public class ProbabilityTableServiceImpl implements ProbabilityTableService {
     }
 
     @Override
-    public ProbabilityTable createProbabilityTable(ProbabilityTableDTO probabilityTableDTO) {
+    public ProbabilityTable createProbabilityTable(Long gameCompanyId, ProbabilityTableDTO probabilityTableDTO) {
         List<ProbabilityPair> probabilities = calculateCumulativeProbabilities(probabilityTableDTO.getProbabilities());
         probabilityTableDTO.setProbabilities(probabilities);
-        return save(probabilityTableDTO.toEntity());
+        return save(probabilityTableDTO.toEntity(gameCompanyId));
     }
 
     private List<ProbabilityPair> calculateCumulativeProbabilities(List<ProbabilityPair> originalProbabilities) {

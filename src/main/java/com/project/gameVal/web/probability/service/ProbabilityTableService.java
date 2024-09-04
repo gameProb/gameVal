@@ -8,7 +8,7 @@ public interface ProbabilityTableService {
 
     ProbabilityTable save(ProbabilityTable probabilityTable);
 
-    ProbabilityTable createProbabilityTable(ProbabilityTableDTO probabilityTableDTO);
+    ProbabilityTable createProbabilityTable(Long gameCompanyId, ProbabilityTableDTO probabilityTableDTO);
 
     String findResultByTargetValue(String tableId, Double target);
 }
