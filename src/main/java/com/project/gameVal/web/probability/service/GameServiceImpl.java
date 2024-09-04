@@ -1,6 +1,7 @@
 package com.project.gameVal.web.probability.service;
 
 import com.project.gameVal.web.probability.domain.Game;
+import com.project.gameVal.web.probability.domain.GameCompany;
 import com.project.gameVal.web.probability.dto.GameRegisterDTO;
 import com.project.gameVal.web.probability.exception.GameAlreadyExistException;
 import com.project.gameVal.web.probability.repository.GameRepository;
@@ -15,14 +16,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class GameServiceImpl implements GameService{
     private final GameRepository gameRepository;
 
+    private final GameCompanyService gameCompanyService;
+
     @Override
     @Transactional
-    public void save(GameRegisterDTO gameRegisterDTO) {
-        if(gameRepository.existsByName(gameRegisterDTO.getName())) {
+    public void save(Long gameCompanyId, GameRegisterDTO gameRegisterDTO) {
+        if (gameRepository.existsByName(gameRegisterDTO.getName())) {
             log.warn("GameAlreadyExistException in save");
             throw new GameAlreadyExistException();
         }
-        Game game = gameRegisterDTO.toEntity();
+        GameCompany gameCompany = gameCompanyService.findById(gameCompanyId);
+        Game game = gameRegisterDTO.toEntity(gameCompany);
+
         gameRepository.save(game);
     }
 }

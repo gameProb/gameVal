@@ -3,42 +3,36 @@ package com.project.gameVal.common.jwt.auth;
 import com.project.gameVal.common.jwt.exception.AccessTokenExpiredException;
 import com.project.gameVal.common.jwt.exception.AccessTokenNotExistException;
 import com.project.gameVal.common.jwt.exception.TokenNotValidException;
-import com.project.gameVal.common.jwt.service.LogoutAccessTokenService;
-import com.project.gameVal.web.probability.domain.GameCompany;
-import com.project.gameVal.web.probability.domain.PrincipalDetails;
+import com.project.gameVal.web.probability.domain.GameCompanyInformInToken;
 import com.project.gameVal.web.probability.exception.GameCompanyNotFoundException;
-import com.project.gameVal.web.probability.service.GameCompanyService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.io.IOException;
+import java.util.List;
+
 @Slf4j
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
     private final JWTUtil jwtUtil;
 
-    private final GameCompanyService gameCompanyService;
-
     private final RequestMatcher excludeRequestMatcher;
 
-    private final LogoutAccessTokenService logoutAccessTokenService;
 
     @Builder
-    public JWTAuthorizationFilter(JWTUtil jwtUtil, GameCompanyService gameCompanyService,
-                                  LogoutAccessTokenService logoutAccessTokenService) {
+    public JWTAuthorizationFilter(JWTUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        this.gameCompanyService = gameCompanyService;
-        this.logoutAccessTokenService = logoutAccessTokenService;
         this.excludeRequestMatcher = new OrRequestMatcher(
                 new AntPathRequestMatcher("/token/reIssue", HttpMethod.POST.name()),
 
@@ -70,18 +64,14 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             String accessToken = jwtUtil.getAccessTokenByRequest(request);
 
             jwtUtil.validateAccessToken(accessToken);
-            if (!logoutAccessTokenService.isValid(accessToken)) {
-                throw new TokenNotValidException();
-            }
 
-            Long gameCompanyId = jwtUtil.getIdByAccessToken(accessToken);
-            GameCompany gameCompany = gameCompanyService.findById(gameCompanyId);
+            GameCompanyInformInToken gameCompanyInform = jwtUtil.getGameCompanyInformInAccessToken(accessToken);
 
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(
-                            gameCompany,
+                            gameCompanyInform,
                             null,
-                            new PrincipalDetails(gameCompany).getAuthorities()
+                            List.of(new SimpleGrantedAuthority(gameCompanyInform.getRole().toString()))
                     )
             );
 
