@@ -4,7 +4,10 @@ import com.project.gameVal.common.exception.RuntimeExceptionWithHttpStatus;
 import org.springframework.http.HttpStatus;
 
 public class GameAlreadyExistException extends RuntimeExceptionWithHttpStatus {
+    private static final String DEFAULT_MESSAGE = "Game Already Exists";
+    private static final HttpStatus DEFAULT_STATUS = HttpStatus.CONFLICT;
+
     public GameAlreadyExistException() {
-        super("Game Already Exist", HttpStatus.CONFLICT);
+        super(DEFAULT_MESSAGE, DEFAULT_STATUS);
     }
 }

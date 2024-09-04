@@ -5,6 +5,7 @@ import com.project.gameVal.web.probability.domain.GameCompany;
 import com.project.gameVal.web.probability.dto.GameRegisterDTO;
 import com.project.gameVal.web.probability.service.GameCompanyService;
 import com.project.gameVal.web.probability.service.GameService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class GameAPIController {
     private final JWTUtil jwtUtil;
 
     @PostMapping("/add")
-    public ResponseEntity<String> addGame(@RequestHeader("Authorization") String authorizationHeader, @RequestBody GameRegisterDTO gameRegisterDTO) {
+    public ResponseEntity<String> addGame(@RequestHeader("Authorization") String authorizationHeader, @Valid @RequestBody GameRegisterDTO gameRegisterDTO) {
         log.info("start add game");
         String accessToken = jwtUtil.getAccessTokenByAuthorizationHeader(authorizationHeader);
         Long gameCompanyId = jwtUtil.getIdByAccessToken(accessToken);

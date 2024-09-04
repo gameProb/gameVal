@@ -23,6 +23,11 @@ public class WebExceptionHandler {
         return buildResponseEntity(ex);
     }
 
+    @ExceptionHandler(ProbabilityTableException.class)
+    public ResponseEntity<String> handleProbabilityTableException(ProbabilityTableException ex) {
+        return buildResponseEntity(ex);
+    }
+
     private ResponseEntity<String> buildResponseEntity(RuntimeExceptionWithHttpStatus ex) {
         // 예외 클래스에서 HTTP 상태 코드를 가져오는 메서드 호출
         return new ResponseEntity<>(ex.getMessage(), ex.getHttpStatus());
