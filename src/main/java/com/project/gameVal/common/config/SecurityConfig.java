@@ -1,12 +1,9 @@
 package com.project.gameVal.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.gameVal.common.jwt.service.LogoutAccessTokenService;
-import com.project.gameVal.common.jwt.service.RefreshTokenService;
 import com.project.gameVal.common.jwt.auth.JWTAuthenticationFilter;
 import com.project.gameVal.common.jwt.auth.JWTAuthorizationFilter;
 import com.project.gameVal.common.jwt.auth.JWTUtil;
-import com.project.gameVal.web.probability.service.GameCompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +15,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -30,9 +29,11 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final CorsConfigurationSource corsConfigurationSource;
     private final JWTUtil jwtUtil;
-    private final RefreshTokenService refreshTokenService;
-    private final GameCompanyService gameCompanyService;
-    private final LogoutAccessTokenService logoutAccessTokenService;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
@@ -58,13 +59,11 @@ public class SecurityConfig {
                                 .authenticationManager(authenticationManager)
                                 .objectMapper(objectMapper)
                                 .jwtUtil(jwtUtil)
-                                .refreshTokenService(refreshTokenService)
-                                .gameCompanyService(gameCompanyService)
                                 .build(),
                         UsernamePasswordAuthenticationFilter.class
                 )
                 .addFilterAfter(
-                        new JWTAuthorizationFilter(jwtUtil, gameCompanyService, logoutAccessTokenService),
+                        new JWTAuthorizationFilter(jwtUtil),
                         UsernamePasswordAuthenticationFilter.class
                 );
 

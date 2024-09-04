@@ -4,20 +4,23 @@ import com.project.gameVal.common.jwt.exception.AccessTokenExpiredException;
 import com.project.gameVal.common.jwt.exception.AccessTokenNotExistException;
 import com.project.gameVal.common.jwt.exception.RefreshTokenExpiredException;
 import com.project.gameVal.common.jwt.exception.TokenNotValidException;
+import com.project.gameVal.web.probability.domain.GameCompanyInformInToken;
+import com.project.gameVal.web.probability.domain.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import javax.crypto.spec.SecretKeySpec;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -25,14 +28,8 @@ public class JWTUtil {
     @Value("${jwt.accessToken.tokenPrefix}")
     private String tokenPrefix;
 
-    @Value("${jwt.accessToken.SendingHeaderName}")
-    private String accessTokenSendingHeaderName;
-
-    @Value("${jwt.accessToken.GettingHeaderName}")
-    private String accessTokenGettingHeaderName;
-
-    @Value("${jwt.refreshToken.headerName}")
-    private String refreshTokenHeaderName;
+    @Value("${jwt.accessToken.headerName}")
+    private String accessTokenHeaderName;
 
     @Value("${jwt.accessToken.secret}")
     private String accessTokenSecretKey;
@@ -54,11 +51,12 @@ public class JWTUtil {
         return new SecretKeySpec(refreshTokenSecretKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
     }
 
-    public String createAccessToken(Long id, String name) {
+    public String createAccessToken(Long id, String name, Role role) {
         Date now = new Date();
         Map<String, Object> claims = new HashMap<>();
-        claims.put("gameCompanyId", id.toString());
+        claims.put("gameCompanyId", id);
         claims.put("gameCompanyName", name);
+        claims.put("role", role.toString());
 
         return Jwts.builder()
                 //header
@@ -72,11 +70,12 @@ public class JWTUtil {
                 .compact();
     }
 
-    public String createRefreshToken(Long id, String name) {
+    public String createRefreshToken(Long id, String name, Role role) {
         Date now = new Date();
         Map<String, Object> claims = new HashMap<>();
-        claims.put("gameCompanyId", id.toString());
+        claims.put("gameCompanyId", id);
         claims.put("gameCompanyName", name);
+        claims.put("role", role.toString());
 
         return Jwts.builder()
                 //header
@@ -118,61 +117,6 @@ public class JWTUtil {
         }
     }
 
-    public String getNameByAccessToken(String accessToken) throws AccessTokenExpiredException {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningAccessKey())
-                .build()
-                .parseClaimsJws(accessToken).getBody()
-                .get("gameCompanyName", String.class);
-    }
-
-
-    public String getNameByRefreshToken(String refreshToken) throws RefreshTokenExpiredException {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningRefreshKey())
-                .build()
-                .parseClaimsJws(refreshToken).getBody()
-                .get("gameCompanyName", String.class);
-    }
-
-    public Long getIdByAccessToken(String accessToken) throws AccessTokenExpiredException {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSigningAccessKey())
-                .build()
-                .parseClaimsJws(accessToken).getBody();
-
-        String idString = claims.get("gameCompanyId", String.class);
-        if (idString == null) {
-            return Long.parseLong(claims.getSubject());
-        }
-
-        return Long.parseLong(idString);
-    }
-
-    public Long getIdByRefreshToken(String refreshToken) throws RefreshTokenExpiredException {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSigningRefreshKey())
-                .build()
-                .parseClaimsJws(refreshToken).getBody();
-
-        String idString = claims.get("gameCompanyId", String.class);
-        if (idString == null) {
-            return Long.parseLong(claims.getSubject());
-        }
-
-        return Long.parseLong(idString);
-    }
-
-    public Long getRemainingTimeByAccessToken(String accessToken) {
-        long expiration = Jwts.parserBuilder()
-                .setSigningKey(getSigningAccessKey())
-                .build()
-                .parseClaimsJws(accessToken).getBody()
-                .getExpiration().getTime();
-
-        return (expiration - new Date().getTime()) / 1000;
-    }
-
     public Long getRemainingTimeByRefreshToken(String refreshToken) {
         long expiration = Jwts.parserBuilder()
                 .setSigningKey(getSigningRefreshKey())
@@ -186,7 +130,7 @@ public class JWTUtil {
 
 
     public String getAccessTokenByRequest(HttpServletRequest request) {
-        String accessToken = request.getHeader(accessTokenGettingHeaderName);
+        String accessToken = request.getHeader(accessTokenHeaderName);
         if (accessToken == null) {
             throw new AccessTokenNotExistException();
         }
@@ -194,10 +138,29 @@ public class JWTUtil {
         return accessToken.replace(tokenPrefix, "");
     }
 
-    public String getAccessTokenByAuthorizationHeader(String header) {
-        if (header == null) {
-            throw new AccessTokenNotExistException();
-        }
-        return header.replace(tokenPrefix, "");
+    public GameCompanyInformInToken getGameCompanyInformInAccessToken(String accessToken) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningAccessKey())
+                .build()
+                .parseClaimsJws(accessToken).getBody();
+
+        Long gameCompanyId = claims.get("gameCompanyId", Long.class);
+        String gameCompanyName = claims.get("gameCompanyName", String.class);
+        Role role = Role.valueOf(claims.get("role", String.class));
+
+        return new GameCompanyInformInToken(gameCompanyId, gameCompanyName, role);
+    }
+
+    public GameCompanyInformInToken getGameCompanyInformInRefreshToken(String refreshToken) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningRefreshKey())
+                .build()
+                .parseClaimsJws(refreshToken).getBody();
+
+        Long gameCompanyId = claims.get("gameCompanyId", Long.class);
+        String gameCompanyName = claims.get("gameCompanyName", String.class);
+        Role role = Role.valueOf(claims.get("role", String.class));
+
+        return new GameCompanyInformInToken(gameCompanyId, gameCompanyName, role);
     }
 }

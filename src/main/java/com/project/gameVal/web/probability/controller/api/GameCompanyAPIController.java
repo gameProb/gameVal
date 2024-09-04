@@ -1,7 +1,7 @@
 package com.project.gameVal.web.probability.controller.api;
 
-import com.project.gameVal.common.jwt.auth.JWTUtil;
 import com.project.gameVal.web.probability.dto.GameCompanyRegisterDTO;
+import com.project.gameVal.web.probability.dto.LogoutRequestDTO;
 import com.project.gameVal.web.probability.service.GameCompanyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/company/api")
 public class GameCompanyAPIController {
     private final GameCompanyService gameCompanyService;
-    private final JWTUtil jwtUtil;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody GameCompanyRegisterDTO gameCompanyRegisterDTO) {
@@ -31,8 +29,8 @@ public class GameCompanyAPIController {
     //login은 JwtAuthenticationFilter에서 진행
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestHeader("Authorization") String authorizationHeader) {
-        gameCompanyService.logout(jwtUtil.getAccessTokenByAuthorizationHeader(authorizationHeader));
+    public ResponseEntity<String> logout(@RequestBody @Valid LogoutRequestDTO logoutRequestDTO){
+        gameCompanyService.logout(logoutRequestDTO.getRefreshToken());
         return new ResponseEntity<>("successfully logged out", HttpStatus.OK);
     }
 }
