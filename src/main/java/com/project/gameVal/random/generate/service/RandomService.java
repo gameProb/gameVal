@@ -35,10 +35,9 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class RandomService {
 
-    private final RandomGenerator randomGenerator = new RandomGenerator();
-
     private final ReentrantReadWriteLock changeSequenceLock = new ReentrantReadWriteLock();
 
+    private final RandomGenerator randomGenerator;
 
     private final RandomResultRepository randomResultRepository;
 
