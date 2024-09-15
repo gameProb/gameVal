@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class CurrentSeedState {
 
-    private RandomSeed beforeSeed;
+    private RandomSeed secondFromLastSeed;
 
     private RandomSeed lastSeed;
 }

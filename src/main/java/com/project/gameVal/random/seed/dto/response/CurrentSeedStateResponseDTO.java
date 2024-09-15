@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CurrentSeedStateResponseDTO {
 
-    private byte[] beforeNaiveSeed;
+    private byte[] secondFromLastNaiveSeed;
 
     private byte[] currentHashedSeed;
 }

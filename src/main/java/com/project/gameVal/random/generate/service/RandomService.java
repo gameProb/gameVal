@@ -85,7 +85,7 @@ public class RandomService {
             RandomSeed lastSeed;
             try {
                 CurrentSeedState currentSeedState = randomSeedService.getCurrentSeedState();
-                beforeSeed = currentSeedState.getBeforeSeed();
+                beforeSeed = currentSeedState.getSecondFromLastSeed();
                 lastSeed = currentSeedState.getLastSeed();
             } catch (IllegalStateException e) {
                 // seed가 부족한 경우 초기화

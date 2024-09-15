@@ -40,10 +40,10 @@ public class RandomSeedService {
         List<RandomSeed> top2ByOrderByCreateTimeDesc = randomSeedRepository.findTop2ByOrderBySeedStartTimeDesc();
         if (top2ByOrderByCreateTimeDesc.size() < 2) throw new IllegalStateException("Seed is not enough");
 
-        RandomSeed beforeSeed = top2ByOrderByCreateTimeDesc.get(1);
+        RandomSeed secondFromLastSeed = top2ByOrderByCreateTimeDesc.get(1);
         RandomSeed lastSeed = top2ByOrderByCreateTimeDesc.get(0);
 
-        return new CurrentSeedState(beforeSeed, lastSeed);
+        return new CurrentSeedState(secondFromLastSeed, lastSeed);
     }
 
     private byte[] hashSeed(byte[] seed) throws NoSuchAlgorithmException {
@@ -54,6 +54,6 @@ public class RandomSeedService {
     public CurrentSeedStateResponseDTO getCurrentSeedStateResponseDTO() throws NoSuchAlgorithmException {
         CurrentSeedState currentSeedState = getCurrentSeedState();
 
-        return new CurrentSeedStateResponseDTO(currentSeedState.getBeforeSeed().getSeed(), hashSeed(currentSeedState.getLastSeed().getSeed()));
+        return new CurrentSeedStateResponseDTO(currentSeedState.getSecondFromLastSeed().getSeed(), hashSeed(currentSeedState.getLastSeed().getSeed()));
     }
 }
