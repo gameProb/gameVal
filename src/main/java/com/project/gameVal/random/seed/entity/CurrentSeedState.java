@@ -1,12 +1,11 @@
-package com.project.gameVal.random.seed.dto.response;
+package com.project.gameVal.random.seed.entity;
 
-import com.project.gameVal.random.seed.entity.RandomSeed;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class CurrentStateSeeds {
+public class CurrentSeedState {
 
     private RandomSeed beforeSeed;
 

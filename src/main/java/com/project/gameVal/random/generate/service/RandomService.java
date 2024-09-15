@@ -9,7 +9,7 @@ import com.project.gameVal.random.generate.entity.RandomResult;
 import com.project.gameVal.random.generate.entity.RandomSequences;
 import com.project.gameVal.random.generate.repository.RandomResultRepository;
 import com.project.gameVal.random.generate.util.RandomGenerator;
-import com.project.gameVal.random.seed.dto.response.CurrentStateSeeds;
+import com.project.gameVal.random.seed.entity.CurrentSeedState;
 import com.project.gameVal.random.seed.entity.RandomSeed;
 import com.project.gameVal.random.seed.service.RandomSeedService;
 import com.project.gameVal.web.probability.service.ProbabilityTableService;
@@ -84,7 +84,7 @@ public class RandomService {
             RandomSeed beforeSeed;
             RandomSeed lastSeed;
             try {
-                CurrentStateSeeds currentSeedState = randomSeedService.getCurrentSeedState();
+                CurrentSeedState currentSeedState = randomSeedService.getCurrentSeedState();
                 beforeSeed = currentSeedState.getBeforeSeed();
                 lastSeed = currentSeedState.getLastSeed();
             } catch (IllegalStateException e) {

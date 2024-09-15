@@ -1,7 +1,7 @@
 package com.project.gameVal.random.seed.service;
 
-import com.project.gameVal.random.seed.dto.response.CurrentStateSeeds;
-import com.project.gameVal.random.seed.dto.response.RandomSeedResponseDTO;
+import com.project.gameVal.random.seed.entity.CurrentSeedState;
+import com.project.gameVal.random.seed.dto.response.CurrentSeedStateResponseDTO;
 import com.project.gameVal.random.seed.entity.RandomSeed;
 import com.project.gameVal.random.seed.repository.RandomSeedRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,14 +36,14 @@ public class RandomSeedService {
         }
     }
 
-    public CurrentStateSeeds getCurrentSeedState() throws IllegalStateException {
+    public CurrentSeedState getCurrentSeedState() throws IllegalStateException {
         List<RandomSeed> top2ByOrderByCreateTimeDesc = randomSeedRepository.findTop2ByOrderBySeedStartTimeDesc();
         if (top2ByOrderByCreateTimeDesc.size() < 2) throw new IllegalStateException("Seed is not enough");
 
         RandomSeed beforeSeed = top2ByOrderByCreateTimeDesc.get(1);
         RandomSeed lastSeed = top2ByOrderByCreateTimeDesc.get(0);
 
-        return new CurrentStateSeeds(beforeSeed, lastSeed);
+        return new CurrentSeedState(beforeSeed, lastSeed);
     }
 
     private byte[] hashSeed(byte[] seed) throws NoSuchAlgorithmException {
@@ -51,9 +51,9 @@ public class RandomSeedService {
         return digest.digest(seed);
     }
 
-    public RandomSeedResponseDTO getCurrentSeedStateResponseDTO() throws NoSuchAlgorithmException {
-        CurrentStateSeeds currentSeedState = getCurrentSeedState();
+    public CurrentSeedStateResponseDTO getCurrentSeedStateResponseDTO() throws NoSuchAlgorithmException {
+        CurrentSeedState currentSeedState = getCurrentSeedState();
 
-        return new RandomSeedResponseDTO(currentSeedState.getBeforeSeed().getSeed(), hashSeed(currentSeedState.getLastSeed().getSeed()));
+        return new CurrentSeedStateResponseDTO(currentSeedState.getBeforeSeed().getSeed(), hashSeed(currentSeedState.getLastSeed().getSeed()));
     }
 }
