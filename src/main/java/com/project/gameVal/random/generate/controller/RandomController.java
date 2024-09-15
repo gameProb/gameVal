@@ -2,7 +2,6 @@ package com.project.gameVal.random.generate.controller;
 
 import com.project.gameVal.random.generate.dto.request.RandomNumbersRequestDTO;
 import com.project.gameVal.random.generate.dto.request.UserRandomResultListRequestDTO;
-import com.project.gameVal.random.generate.dto.response.RandomResultResponseDTO;
 import com.project.gameVal.random.generate.dto.response.UserRandomResultListResponseDTO;
 import com.project.gameVal.random.generate.service.RandomService;
 import jakarta.validation.Valid;
@@ -24,8 +23,6 @@ public class RandomController {
     @PostMapping
     public ResponseEntity<UserRandomResultListResponseDTO> random(@RequestBody @Valid RandomNumbersRequestDTO randomNumbersRequestDTO) throws NoSuchAlgorithmException {
         UserRandomResultListResponseDTO randomNumbers = randomService.getRandomNumbers(randomNumbersRequestDTO);
-
-        System.out.println(randomNumbers.getRandomResults().stream().map(RandomResultResponseDTO::getRandomNumber).toList());
 
         return new ResponseEntity<>(randomNumbers, HttpStatus.OK);
     }
