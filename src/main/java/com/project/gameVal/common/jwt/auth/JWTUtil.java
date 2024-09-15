@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
 public class JWTUtil {
     @Value("${jwt.accessToken.tokenPrefix}")
     private String tokenPrefix;
