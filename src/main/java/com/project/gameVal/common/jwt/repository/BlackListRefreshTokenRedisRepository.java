@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface RefreshTokenRedisRepository extends CrudRepository<BlackListRefreshToken, String> {
+public interface BlackListRefreshTokenRedisRepository extends CrudRepository<BlackListRefreshToken, String> {
 
     //CREATE
     @Override

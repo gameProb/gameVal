@@ -4,6 +4,7 @@ import com.project.gameVal.common.jwt.auth.JWTUtil;
 import com.project.gameVal.common.jwt.dto.response.JWTsResponse;
 import com.project.gameVal.common.jwt.entity.BlackListRefreshToken;
 import com.project.gameVal.common.jwt.exception.TokenNotValidException;
+import com.project.gameVal.common.jwt.repository.BlackListRefreshTokenRedisRepository;
 import com.project.gameVal.web.probability.domain.GameCompanyInformInToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,14 +15,14 @@ public class TokenService {
 
     private final JWTUtil jwtUtil;
 
-    private final BlackListRefreshTokenService blackListRefreshTokenService;
+    private final BlackListRefreshTokenRedisRepository blackListRefreshTokenRepository;
 
     public void blackListToken(String refreshToken) {
-        blackListRefreshTokenService.save(new BlackListRefreshToken(refreshToken, jwtUtil.getRemainingTimeByRefreshToken(refreshToken)));
+        blackListRefreshTokenRepository.save(new BlackListRefreshToken(refreshToken, jwtUtil.getRemainingTimeByRefreshToken(refreshToken)));
     }
 
     public Boolean isBlackListed(String refreshToken) {
-        return blackListRefreshTokenService.exists(refreshToken);
+        return blackListRefreshTokenRepository.existsById(refreshToken);
     }
 
     public JWTsResponse reIssue(String refreshToken) {
