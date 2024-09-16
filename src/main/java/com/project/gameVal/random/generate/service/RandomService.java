@@ -9,7 +9,7 @@ import com.project.gameVal.random.generate.entity.RandomResult;
 import com.project.gameVal.random.generate.entity.RandomSequences;
 import com.project.gameVal.random.generate.repository.RandomResultRepository;
 import com.project.gameVal.random.generate.util.RandomGenerator;
-import com.project.gameVal.random.seed.dto.response.CurrentStateSeeds;
+import com.project.gameVal.random.seed.entity.CurrentSeedState;
 import com.project.gameVal.random.seed.entity.RandomSeed;
 import com.project.gameVal.random.seed.service.RandomSeedService;
 import com.project.gameVal.web.probability.service.ProbabilityTableService;
@@ -35,10 +35,9 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class RandomService {
 
-    private final RandomGenerator randomGenerator = new RandomGenerator();
-
     private final ReentrantReadWriteLock changeSequenceLock = new ReentrantReadWriteLock();
 
+    private final RandomGenerator randomGenerator;
 
     private final RandomResultRepository randomResultRepository;
 
@@ -85,8 +84,8 @@ public class RandomService {
             RandomSeed beforeSeed;
             RandomSeed lastSeed;
             try {
-                CurrentStateSeeds currentSeedState = randomSeedService.getCurrentSeedState();
-                beforeSeed = currentSeedState.getBeforeSeed();
+                CurrentSeedState currentSeedState = randomSeedService.getCurrentSeedState();
+                beforeSeed = currentSeedState.getSecondFromLastSeed();
                 lastSeed = currentSeedState.getLastSeed();
             } catch (IllegalStateException e) {
                 // seed가 부족한 경우 초기화

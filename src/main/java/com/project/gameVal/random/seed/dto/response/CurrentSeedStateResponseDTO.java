@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RandomSeedResponseDTO {
+public class CurrentSeedStateResponseDTO {
 
-    private byte[] beforeNaiveSeed;
+    private byte[] secondFromLastNaiveSeed;
 
     private byte[] currentHashedSeed;
 }
