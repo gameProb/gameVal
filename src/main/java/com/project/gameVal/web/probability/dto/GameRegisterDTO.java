@@ -16,9 +16,7 @@ public class GameRegisterDTO {
     @Size(min = 1, max = 50) // 문자열 길이 검증
     private String name;
 
-    private GameCompany gameCompany;
-
-    public Game toEntity() {
+    public Game toEntity(GameCompany gameCompany) {
         return new Game(null, name, gameCompany);
     }
 }

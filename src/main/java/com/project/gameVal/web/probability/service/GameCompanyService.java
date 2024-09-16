@@ -12,5 +12,5 @@ public interface GameCompanyService extends UserDetailsService {
 
     GameCompany findById(Long id);
 
-    void logout(String accessToken);
+    void logout(String refreshToken);
 }
